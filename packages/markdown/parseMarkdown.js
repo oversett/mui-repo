@@ -1,3 +1,7 @@
+// OVERSETT: added this
+const cheerio = require('cheerio');
+const escapeHtml = require('escape-html');
+
 const { marked } = require('marked');
 const kebabCase = require('lodash/kebabCase');
 const textToHash = require('./textToHash');
@@ -195,7 +199,16 @@ function createRender(context) {
         return `<h${level}>${headingHtml}</h${level}>`;
       }
 
-      const headingText = headingHtml
+      // OVERSETT: We want to use the original heading text for the hash, not the translated text.
+      let originalHeadingHtml = headingHtml;
+      {
+        const $ = cheerio.load(headingHtml);
+        const meta = $('meta[data-oversett]');
+        const originalText = meta.attr("data-original-text");
+        if (originalText) { originalHeadingHtml = escapeHtml(originalText); }
+      }
+
+      const makeHeadingText = h => h
         .replace(
           /([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])\uFE0F?/g,
           '',
@@ -203,16 +216,19 @@ function createRender(context) {
         .replace(/<\/?[^>]+(>|$)/g, '') // remove HTML
         .trim();
 
+      const headingText = makeHeadingText(headingHtml);
+      const originalHeadingText = makeHeadingText(originalHeadingHtml);
+
       // Standardizes the hash from the default location (en) to different locations
       // Need english.md file parsed first
       let hash;
       if (userLanguage === 'en') {
-        hash = textToHash(headingText, headingHashes);
+        hash = textToHash(originalHeadingText, headingHashes);
       } else {
         headingIndex += 1;
         hash = Object.keys(headingHashes)[headingIndex];
         if (!hash) {
-          hash = textToHash(headingText, headingHashesFallbackTranslated);
+          hash = textToHash(originalHeadingText, headingHashesFallbackTranslated);
         }
       }
 
@@ -398,6 +414,8 @@ function prepareMarkdown(config) {
         throw new Error(`Missing title in the page: ${location}`);
       }
 
+      // OVERSETT: disabled because <meta> tags make titles too long
+      /*
       if (title.length > 70) {
         throw new Error(
           [
@@ -407,6 +425,7 @@ function prepareMarkdown(config) {
           ].join('\n'),
         );
       }
+      */
 
       if (description == null || description === '') {
         throw new Error(`Missing description in the page: ${location}`);
