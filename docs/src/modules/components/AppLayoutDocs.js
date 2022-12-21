@@ -123,7 +123,9 @@ function AppLayoutDocs(props) {
           */}
           {disableToc ? null : <AppTableOfContents toc={toc} />}
           <StyledAppContainer disableAd={disableAd} disableToc={disableToc}>
+            {/* OVERSETT: disabled
             <ActionsDiv>{location && <EditPage markdownLocation={location} />}</ActionsDiv>
+            */}
             {children}
             <NoSsr>
               <AppLayoutDocsFooter tableOfContents={toc} />

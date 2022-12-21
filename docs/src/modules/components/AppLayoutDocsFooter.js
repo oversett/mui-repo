@@ -407,6 +407,7 @@ export default function AppLayoutDocsFooter(props) {
                 justifyContent="center"
                 alignItems="center"
                 aria-labelledby="feedback-message"
+                sx={{display: 'none'}}  // OVERSETT: feedback disabled
               >
                 <Typography
                   align="center"
