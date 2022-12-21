@@ -16,7 +16,44 @@ import BrandingCssVarsProvider from 'docs/src/BrandingCssVarsProvider';
 import NewsletterToast from 'docs/src/components/home/NewsletterToast';
 import AppHeaderBanner from 'docs/src/components/banner/AppHeaderBanner';
 
+// OVERSETT
+import ROUTES from 'docs/src/route';
+import Link from 'docs/src/modules/components/Link';
+import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
+import { Stack } from '@mui/material';
+
 export default function Home() {
+  // OVERSETT: We don't want to show the home page because it's (probably?) copyrighted. We only want to show the docs.
+  const button = (to: string, label: string) =>
+    <Button
+      href={to}
+      component={Link}
+      noLinkStyle
+      size="large"
+      variant="outlined"
+    >
+      {label}
+    </Button>
+  return (
+    <BrandingCssVarsProvider>
+      <Head title="MUI" description="MUI" />
+      <main id="main-content">
+        <Container sx={{mt: 10}}>
+          <h1>MUI</h1>
+          <Stack spacing={3} direction="row">
+            {button(ROUTES.materialDocs, 'Material UI')}
+            {button(ROUTES.joyDocs, 'Joy UI')}
+            {button(ROUTES.baseDocs, 'MUI Base')}
+            {button(ROUTES.systemDocs, 'MUI System')}
+          </Stack>
+          <Divider sx={{mt: 10}} />
+          <p><i>Machine-translated. See <Link href="https://oversett.xyz">Oversett</Link> for details and contact info.</i></p>
+        </Container>
+      </main>
+    </BrandingCssVarsProvider>
+  )
+
   return (
     <BrandingCssVarsProvider>
       <Head
